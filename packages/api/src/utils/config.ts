@@ -11,7 +11,7 @@ if (fs.existsSync(localEnvPath)) {
   console.log(`Loaded .env from: ${localEnvPath}`)
 } else {
   const monorepoRoot = path.resolve(__dirname, '../../../../../../../../../..') // adjust this if needed
-  const fallbackEnvPath = path.resolve(monorepoRoot, 'packages/api/.env')
+  const fallbackEnvPath = path.resolve(monorepoRoot, 'workspaces/cirq/.env')
 
   if (fs.existsSync(fallbackEnvPath)) {
     dotenv.config({ path: fallbackEnvPath })

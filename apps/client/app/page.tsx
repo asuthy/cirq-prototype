@@ -1,11 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    setIsLoggedIn(!!token)
+    setLoading(false)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -17,12 +25,41 @@ export default function LoginPage() {
       headers: { 'Content-Type': 'application/json' },
     })
 
+    const data = await res.json()
+
     if (res.ok) {
+      if (data.token) {
+        localStorage.setItem('token', data.token)
+      }
       window.location.href = '/users'
     } else {
-      const { error } = await res.json()
-      setError(error || 'Login failed')
+      setError(data.error || 'Login failed')
     }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    setIsLoggedIn(false)
+  }
+
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+  }
+
+  if (isLoggedIn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <p>You are already logged in.</p>
+          <button
+            onClick={handleLogout}
+            className="py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
