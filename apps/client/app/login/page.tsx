@@ -1,45 +1,22 @@
 'use client'
 
-import { useState } from 'react'
+import { trpc } from '../../utils/trpc'
 
-export default function LoginPage() {
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+export default function Home() {
+  const { data: users, isLoading } = trpc.getUsers.useQuery()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError('')
-
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-      headers: { 'Content-Type': 'application/json' },
-    })
-
-    if (res.ok) {
-      window.location.href = '/'
-    } else {
-      const { error } = await res.json()
-      setError(error || 'Login failed')
-    }
-  }
+  if (isLoading) return <div>Loading...</div>
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button type="submit">Login</button>
-      {error && <p>{error}</p>}
-    </form>
+    <div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 px-2">
+        {users?.map((user) => (
+          <div key={user.code} className="border p-2 rounded-lg text-center">
+            <h3 className="">{user.login_name}</h3>
+            <p className="text-gray-600">{user.password}</p>
+          </div>
+        ))}
+      </div>
+    </div>
   )
 }

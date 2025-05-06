@@ -54,6 +54,20 @@ This installs all dependencies and tools in a Docker-based environment.
 
 ### 4. Development
 
+Create root .env
+
+```
+# packages/api
+DB_SERVER=
+DB_PORT=1433
+DB_USER=ncsuser
+DB_PASSWORD=
+DB_NAME=ncsdb
+
+# packages/api kysely-codegen
+DATABASE_URL=Server=;Database=ncsdb;User Id=ncsuser;Password=
+```
+
 ```
 pnpm dev
 ```
