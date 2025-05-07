@@ -16,7 +16,7 @@ A modern monorepo built with:
 ```
 cirq/
 ├── apps/
-│   └── web/            # Next.js app with App Router
+│   └── client/            # Next.js app with App Router
 ├── packages/
 │   └── api/            # Shared tRPC router
 ├── .devcontainer/      # Devcontainer setup

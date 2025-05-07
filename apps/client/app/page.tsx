@@ -1,58 +1,48 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useSession, signIn, signOut } from 'next-auth/react'
+import { useRouter } from 'next/navigation'
 
 export default function LoginPage() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [isLoggingIn, setIsLoggingIn] = useState(false)
 
-  useEffect(() => {
-    const token = localStorage.getItem('token')
-    setIsLoggedIn(!!token)
-    setLoading(false)
-  }, [])
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setIsLoggingIn(true)
 
-    const res = await fetch('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ username, password }),
-      headers: { 'Content-Type': 'application/json' },
+    const res = await signIn('credentials', {
+      username,
+      password,
+      redirect: false,
     })
 
-    const data = await res.json()
-
-    if (res.ok) {
-      if (data.token) {
-        localStorage.setItem('token', data.token)
-      }
-      window.location.href = '/users'
+    if (res?.ok) {
+      router.push('/users')
     } else {
-      setError(data.error || 'Login failed')
+      setError('Invalid username or password')
+      setIsLoggingIn(false)
     }
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    setIsLoggedIn(false)
-  }
-
-  if (loading) {
+  if (status === 'loading' || isLoggingIn) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>
   }
 
-  if (isLoggedIn) {
+  if (session) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p>You are already logged in.</p>
+          <p>You are already logged in as {session.user?.name || session.user?.email}</p>
           <button
-            onClick={handleLogout}
+            onClick={() => signOut()}
             className="py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
           >
             Logout
@@ -66,7 +56,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
         <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700">
               Username

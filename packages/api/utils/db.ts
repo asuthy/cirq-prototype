@@ -1,5 +1,5 @@
-import { config } from './config'
-import { DB } from './db.d'
+import { config } from 'api/utils/config'
+import { DB } from 'api/utils/db.d'
 import * as tedious from 'tedious'
 import * as tarn from 'tarn'
 import { Kysely, MssqlDialect } from 'kysely'

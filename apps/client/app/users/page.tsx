@@ -1,6 +1,6 @@
 'use client'
 
-import { trpc } from '../../utils/trpc'
+import { trpc } from '@/utils/trpc'
 
 export default function Home() {
   const { data: users, isLoading } = trpc.getUsers.useQuery()

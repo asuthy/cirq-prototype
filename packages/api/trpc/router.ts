@@ -1,10 +1,13 @@
-import { initTRPC } from '@trpc/server'
-import { z } from 'zod'
-import { db } from './utils/db'
+import { router, publicProcedure } from 'api/trpc/trpc'
+import { isAuthed } from 'api/trpc/middleware'
+import { db } from 'api/utils/db'
 
-const t = initTRPC.create()
-export const appRouter = t.router({
-  getUsers: t.procedure.query(async () => {
+export const appRouter = router({
+  me: publicProcedure.use(isAuthed).query(({ ctx }) => {
+    return ctx.session?.user
+  }),
+
+  getUsers: publicProcedure.use(isAuthed).query(async ({ ctx }) => {
     try {
       const publications = await db.selectFrom('t_user').selectAll().execute()
       return publications
@@ -13,7 +16,8 @@ export const appRouter = t.router({
     }
   }),
 
-  userLogin: t.procedure
+  /*userLogin: publicProcedure
+    .use(isAuthed)
     .input(
       z.object({
         loginName: z.string(),
@@ -38,7 +42,5 @@ export const appRouter = t.router({
         console.error(err)
         throw new Error('Login failed')
       }
-    }),
+    }),*/
 })
-
-export type AppRouter = typeof appRouter

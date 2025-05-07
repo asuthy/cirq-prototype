@@ -1,7 +1,7 @@
 // app/api/login/route.ts
 import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
-import { appRouter } from 'api/router'
+import { appRouter } from 'api/trpc/router'
 
 const JWT_SECRET = 'REPLACE_WITH_REAL_SECRET'
 
