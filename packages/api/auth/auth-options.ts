@@ -1,6 +1,7 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
 import type { AuthOptions } from 'next-auth'
 import { userLogin } from 'api/db/queries/user'
+import 'next-auth'
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -23,6 +24,22 @@ export const authOptions: AuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.forename = user.forename
+        token.surname = user.surname
+      }
+      return token // The token is returned with the custom information
+    },
+    async session({ session, token }) {
+      if (token) {
+        session.user.name = token.forename + ' ' + token.surname
+      }
+      return session
+    },
+  },
   session: {
     strategy: 'jwt',
   },

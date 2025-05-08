@@ -2,9 +2,15 @@
     "compilerOptions": {
       "baseUrl": ".",
       "paths": {
-        "api/*": ["packages/api/*"]
+        "api/*": ["packages/api/*"],
+        "@types/*": ["types/*"]
       }
     },
-    "exclude": ["node_modules"]
+    "include": [
+      "types/**/*.d.ts",
+      "packages/**/*",
+      "apps/**/*"
+    ],
+    "exclude": ["node_modules", "**/node_modules"],
   }
   

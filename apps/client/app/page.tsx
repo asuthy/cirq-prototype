@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
+import { Card, CardBody, Input, Button, Spinner, Chip } from '@heroui/react'
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
@@ -32,66 +33,65 @@ export default function LoginPage() {
     }
   }
 
+  const isButtonDisabled = !username || !password
+
   if (status === 'loading' || isLoggingIn) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Spinner size="lg" />
+      </div>
+    )
   }
 
   if (session) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p>You are already logged in as {session.user?.name || session.user?.email}</p>
-          <button
-            onClick={() => signOut()}
-            className="py-2 px-4 bg-red-500 text-white rounded-md hover:bg-red-600"
-          >
+          <div>Logged in as {session.user?.name || session.user?.email}</div>
+          <Button color="primary" onClick={() => signOut()}>
             Logout
-          </button>
+          </Button>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
-        <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
-        <form onSubmit={handleLogin}>
-          <div className="mb-4">
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
-            </label>
-            <input
+    <div className="min-h-screen flex items-center justify-center">
+      <Card className="w-full max-w-md">
+        <CardBody>
+          <form onSubmit={handleLogin} className="space-y-6 p-4">
+            <Input
               id="username"
               type="text"
+              label="Username"
               placeholder="Enter your username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-          </div>
-          <div className="mb-6">
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
+
+            <Input
               id="password"
               type="password"
+              label="Password"
               placeholder="Enter your password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             />
-          </div>
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            Login
-          </button>
-          {error && <p className="mt-4 text-red-500 text-sm text-center">{error}</p>}
-        </form>
-      </div>
+
+            <Button
+              type="submit"
+              color="primary"
+              className="w-full"
+              disabled={isButtonDisabled}
+              isDisabled={isButtonDisabled}
+            >
+              Login
+            </Button>
+            {error && <p className="text-center text-red-500 text-sm">{error}</p>}
+          </form>
+        </CardBody>
+      </Card>
     </div>
   )
 }
