@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Table,
   TableHeader,
@@ -20,14 +20,35 @@ import { TR0001NetSaleDetail } from '@cirq/types/db'
 export default function Home() {
   const { data: rows, isLoading } = trpc.report.netSaleReport.useQuery()
 
-  const [page, setPage] = React.useState(1)
-  const [sortDescriptor, setSortDescriptor] = React.useState<SortDescriptor>({
+  const [page, setPage] = useState(1)
+  const [rowsPerPage, setRowsPerPage] = useState<number | null>(null)
+  const [sortDescriptor, setSortDescriptor] = useState<SortDescriptor>({
     column: 'acc_no',
     direction: 'ascending',
   })
 
-  const rowsPerPage = 20
-  const pages = Math.ceil((rows?.length ?? 0) / rowsPerPage)
+  const calculateRowsPerPage = () => {
+    const availableHeight = window.innerHeight - 200 // Adjust padding for other content
+    const estimatedRowHeight = 38
+    const count = Math.floor(availableHeight / estimatedRowHeight)
+    setRowsPerPage(count > 0 ? count : 1)
+  }
+
+  useEffect(() => {
+    calculateRowsPerPage()
+
+    const handleResize = () => {
+      calculateRowsPerPage()
+    }
+
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
+  const pages = Math.ceil((rows?.length ?? 0) / (rowsPerPage ?? 1))
 
   const formatDate = (value: string | null) => {
     if (!value) return ''
@@ -43,14 +64,12 @@ export default function Home() {
     if (!rows) return []
 
     const sorted = [...rows]
-
     const { column, direction } = sortDescriptor
 
     sorted.sort((a, b) => {
       const aVal = a[column as keyof TR0001NetSaleDetail]
       const bVal = b[column as keyof TR0001NetSaleDetail]
 
-      // Special handling for dates
       if (column === 'dist_dt') {
         const aDate = aVal ? new Date(aVal as string) : new Date(0)
         const bDate = bVal ? new Date(bVal as string) : new Date(0)
@@ -59,7 +78,6 @@ export default function Home() {
           : bDate.getTime() - aDate.getTime()
       }
 
-      // Fallback: string or number sorting
       const aStr = aVal !== null && aVal !== undefined ? String(aVal) : ''
       const bStr = bVal !== null && bVal !== undefined ? String(bVal) : ''
 
@@ -71,11 +89,12 @@ export default function Home() {
   }, [rows, sortDescriptor])
 
   const items = React.useMemo(() => {
+    if (!rowsPerPage) return []
     const start = (page - 1) * rowsPerPage
     return sortedRows.slice(start, start + rowsPerPage)
-  }, [page, sortedRows])
+  }, [page, sortedRows, rowsPerPage])
 
-  if (isLoading) {
+  if (isLoading || !rows || rows.length === 0 || rowsPerPage === null) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Spinner size="lg" />
@@ -83,60 +102,65 @@ export default function Home() {
     )
   }
 
-  if (!rows || rows.length === 0) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-lg text-gray-500">No data available.</p>
-      </div>
-    )
-  }
-
   return (
-    <Table
-      aria-label="Net Sales Report"
-      sortDescriptor={sortDescriptor}
-      onSortChange={setSortDescriptor}
-      bottomContent={
-        <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="secondary"
-            page={page}
-            total={pages}
-            onChange={setPage}
-          />
-        </div>
-      }
-      classNames={{
-        wrapper: 'min-h-[222px]',
-      }}
-    >
-      <TableHeader>
-        <TableColumn key="dist_dt" allowsSorting>
-          DATE
-        </TableColumn>
-        <TableColumn key="agt_short_name" allowsSorting>
-          AGENT
-        </TableColumn>
-        <TableColumn key="sto_qty" allowsSorting>
-          STANDING ORDER
-        </TableColumn>
-      </TableHeader>
-      <TableBody items={items}>
-        {(item) => (
-          <TableRow key={item.row_id}>
-            {(columnKey) => (
-              <TableCell>
-                {columnKey === 'dist_dt'
-                  ? formatDate(item[columnKey as keyof TR0001NetSaleDetail] as string | null)
-                  : getKeyValue(item, columnKey)}
-              </TableCell>
+    <div className="w-full">
+      {/* Scrollable container for the table */}
+      <div className="overflow-x-auto w-full">
+        <Table
+          aria-label="Net Sales Report"
+          sortDescriptor={sortDescriptor}
+          onSortChange={setSortDescriptor}
+          classNames={{
+            wrapper: 'min-h-[222px]',
+          }}
+          className="table-fixed w-full"
+        >
+          <TableHeader>
+            <TableColumn key="dist_dt" allowsSorting>
+              DATE
+            </TableColumn>
+            <TableColumn key="agt_short_name" allowsSorting>
+              AGENT
+            </TableColumn>
+            <TableColumn key="sto_qty" allowsSorting>
+              STANDING ORDER
+            </TableColumn>
+          </TableHeader>
+          <TableBody items={items}>
+            {(item) => (
+              <TableRow key={item.row_id}>
+                {(columnKey) => (
+                  <TableCell
+                    className={`whitespace-nowrap ${columnKey === 'sto_qty' ? 'text-center' : ''}`}
+                    style={
+                      columnKey === 'sto_qty'
+                        ? { width: '150px' } // Fixed width for standing order column
+                        : {}
+                    }
+                  >
+                    {columnKey === 'dist_dt'
+                      ? formatDate(item[columnKey as keyof TR0001NetSaleDetail] as string | null)
+                      : getKeyValue(item, columnKey)}
+                  </TableCell>
+                )}
+              </TableRow>
             )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Fixed pagination controls at the bottom */}
+      <div className="flex w-full justify-center mt-4">
+        <Pagination
+          isCompact
+          showControls
+          showShadow
+          color="primary"
+          page={page}
+          total={pages}
+          onChange={setPage}
+        />
+      </div>
+    </div>
   )
 }
