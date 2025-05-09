@@ -4,7 +4,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 import { initTRPC } from '@trpc/server'
-import type { Context } from 'api/trpc/context'
+import type { Context } from '@cirq/api/trpc/context'
 
 const t = initTRPC.context<Context>().create()
 

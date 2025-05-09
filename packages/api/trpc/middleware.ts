@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server'
-import { middleware } from 'api/trpc//trpc'
+import { middleware } from '@cirq/api/trpc//trpc'
 
 export const isAuthed = middleware(({ ctx, next }) => {
   console.log('ctx.session', ctx.session)

@@ -21,7 +21,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "api/*": ["../../packages/api/*"]
+      "@cirq/api/*": ["../../packages/api/*"],
+      "@cirq/types/*": ["../../packages/types/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

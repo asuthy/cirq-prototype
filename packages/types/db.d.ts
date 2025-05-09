@@ -9,6 +9,38 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
   ? ColumnType<S, I | undefined, U>
   : ColumnType<T, T | undefined, T>;
 
+export interface TR0001NetSaleDetail {
+  acc_no: string | null;
+  acc_type: number | null;
+  agt_id: number | null;
+  agt_short_name: string | null;
+  agt_sub_type_code: string | null;
+  box_number: string | null;
+  brb_qty: number | null;
+  brt_qty: number | null;
+  bst_qty: number | null;
+  bxt_qty: number | null;
+  dd_vch: number | null;
+  ddf_qty: number | null;
+  ddn_qty: number | null;
+  dir_qty: number | null;
+  dist_dt: Date | null;
+  ed_code: string | null;
+  ext_qty: number | null;
+  fre_qty: number | null;
+  link_type: number | null;
+  pub_code: string | null;
+  rec_create: Generated<Date | null>;
+  ret_qty: number | null;
+  row_id: Generated<number>;
+  sto_qty: number | null;
+  uar_qty: number | null;
+  user_code: string;
+  user_tran_id: number;
+  vch_qty: number | null;
+  w_agt_id: number | null;
+}
+
 export interface TUser {
   accum_logon_time: Generated<Date | null>;
   code: string;
@@ -49,5 +81,6 @@ export interface TUser {
 }
 
 export interface DB {
+  t_r0001_net_sale_detail: TR0001NetSaleDetail;
   t_user: TUser;
 }

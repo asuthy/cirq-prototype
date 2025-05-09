@@ -1,16 +1,11 @@
 {
-    "compilerOptions": {
-      "baseUrl": ".",
-      "paths": {
-        "api/*": ["packages/api/*"],
-        "@types/*": ["types/*"]
-      }
-    },
-    "include": [
-      "types/**/*.d.ts",
-      "packages/**/*",
-      "apps/**/*"
-    ],
-    "exclude": ["node_modules", "**/node_modules"],
-  }
-  
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@cirq/api/*": ["packages/api/*"],
+      "@cirq/types/*": ["packages/types/*"]
+    }
+  },
+  "include": ["packages/**/*", "apps/**/*"],
+  "exclude": ["node_modules", "**/node_modules"]
+}

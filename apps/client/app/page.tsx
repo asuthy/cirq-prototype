@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useSession, signIn, signOut } from 'next-auth/react'
 import { useRouter } from 'next/navigation'
-import { Card, CardBody, Input, Button, Spinner, Chip } from '@heroui/react'
+import { Card, CardBody, Input, Button, Spinner } from '@heroui/react'
 
 export default function LoginPage() {
   const { data: session, status } = useSession()
@@ -26,7 +26,8 @@ export default function LoginPage() {
     })
 
     if (res?.ok) {
-      router.push('/users')
+      setIsLoggingIn(false)
+      router.push('/')
     } else {
       setError('Invalid username or password')
       setIsLoggingIn(false)

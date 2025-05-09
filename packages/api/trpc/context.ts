@@ -1,5 +1,5 @@
 import { getServerSession } from 'next-auth'
-import { authOptions } from 'api/auth/auth-options'
+import { authOptions } from '@cirq/api/auth/auth-options'
 import { type CreateNextContextOptions } from '@trpc/server/adapters/next'
 
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {

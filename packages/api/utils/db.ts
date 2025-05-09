@@ -1,5 +1,5 @@
-import { config } from 'api/utils/config'
-import { DB } from 'api/utils/db.d'
+import { config } from '@cirq/api/utils/config'
+import { DB } from '@cirq/types/db.d'
 import * as tedious from 'tedious'
 import * as tarn from 'tarn'
 import { Kysely, MssqlDialect } from 'kysely'

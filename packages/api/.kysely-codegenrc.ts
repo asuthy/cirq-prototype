@@ -1,7 +1,7 @@
 const config = {
-  envFile: '../../.env',
+  envFile: '.env',
   dialect: 'mssql',
-  outFile: './src/utils/db.d.ts',
+  outFile: '../types/db.d.ts',
 }
 
 export default config

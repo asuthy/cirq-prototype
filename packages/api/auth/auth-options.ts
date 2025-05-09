@@ -1,6 +1,6 @@
 import CredentialsProvider from 'next-auth/providers/credentials'
 import type { AuthOptions } from 'next-auth'
-import { userLogin } from 'api/db/queries/user'
+import { userLogin } from '@cirq/api/db/queries/user'
 import 'next-auth'
 
 export const authOptions: AuthOptions = {

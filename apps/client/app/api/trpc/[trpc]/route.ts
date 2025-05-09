@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch'
-import { appRouter } from 'api/trpc/router'
+import { appRouter } from '@cirq/api/trpc/router'
 import type { Session } from 'next-auth'
 
 export async function handler(req: NextRequest) {

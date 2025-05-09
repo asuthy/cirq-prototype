@@ -1,4 +1,4 @@
-import { db } from 'api/utils/db'
+import { db } from '@cirq/api/utils/db'
 
 export async function userLogin(username: string, password: string) {
   try {
