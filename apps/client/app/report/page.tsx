@@ -125,16 +125,36 @@ export default function Home() {
             <TableColumn key="sto_qty" allowsSorting>
               STANDING ORDER
             </TableColumn>
+            <TableColumn key="bxt_qty" allowsSorting>
+              BOXOUTS
+            </TableColumn>
+            <TableColumn key="ext_qty" allowsSorting>
+              EXTRAS
+            </TableColumn>
+            <TableColumn key="fre_qty" allowsSorting>
+              FREE COPIES
+            </TableColumn>
+            <TableColumn key="dir_qty" allowsSorting>
+              DIRECT DELIVERY
+            </TableColumn>
+            <TableColumn key="vch_qty" allowsSorting>
+              DD VOUCHER
+            </TableColumn>
           </TableHeader>
           <TableBody items={items}>
             {(item) => (
               <TableRow key={item.row_id}>
                 {(columnKey) => (
                   <TableCell
-                    className={`whitespace-nowrap ${columnKey === 'sto_qty' ? 'text-center' : ''}`}
+                    className={`whitespace-nowrap ${columnKey === 'sto_qty' || columnKey === 'bxt_qty' || columnKey === 'ext_qty' || columnKey === 'fre_qty' || columnKey === 'dir_qty' || columnKey === 'vch_qty' ? 'text-center' : ''}`}
                     style={
-                      columnKey === 'sto_qty'
-                        ? { width: '150px' } // Fixed width for standing order column
+                      columnKey === 'sto_qty' ||
+                      columnKey === 'bxt_qty' ||
+                      columnKey === 'ext_qty' ||
+                      columnKey === 'fre_qty' ||
+                      columnKey === 'dir_qty' ||
+                      columnKey === 'vch_qty'
+                        ? { width: '1px' }
                         : {}
                     }
                   >
